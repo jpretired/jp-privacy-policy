@@ -6,8 +6,11 @@
 
 declare(strict_types=1);
 
-namespace MyCustomNamespace;
+namespace JpNamespace;
 
+use Fisharebest\Webtrees\Auth;
+use Fisharebest\Webtrees\I18N;
+use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\Module\AbstractModule;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
@@ -26,7 +29,52 @@ return new class extends AbstractModule implements ModuleCustomInterface, Module
      */
     public function title(): string
     {
-        return 'Custom footer';
+        return I18N::translate('Privacy policy');
+    }
+    /**
+     * A sentence describing what this module does.
+     *
+     * @return string
+     */
+    public function description(): string
+    {
+        /* I18N: Description of the “Simple Menu” module */
+        return I18N::translate('Show a privacy policy');
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fisharebest\Webtrees\Module\ModuleCustomInterface::customModuleAuthorName()
+     */
+    public function customModuleAuthorName(): string
+    {
+        return 'Josef Prause';
+    }
+
+    /**
+     * {@inheritDoc}
+     * @see \Fisharebest\Webtrees\Module\ModuleCustomInterface::customModuleVersion()
+     *
+     * We use a system where the version number is equal to the latest version of webtrees
+     * Interim versions get an extra sub number
+     *
+     * The dev version is always one step above the latest stable version of this module
+     * The subsequent stable version depends on the version number of the latest stable version of webtrees
+     *
+     */
+    public function customModuleVersion(): string
+    {
+        return '1.0.0';
+    }
+
+    /**
+     * A URL that will provide the latest stable version of this module.
+     *
+     * @return string
+     */
+    public function customModuleLatestVersionUrl(): string
+    {
+        return 'https://github.com/jpretired/jp-privacy-policy/releases/latest';
     }
 
     /**
