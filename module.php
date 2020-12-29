@@ -24,6 +24,8 @@ return new class extends AbstractModule implements ModuleCustomInterface, Module
     use ModuleCustomTrait;
     use ModuleFooterTrait;
 
+    private $lang_switch;
+    
     /**
      * @return string
      */
@@ -97,6 +99,19 @@ return new class extends AbstractModule implements ModuleCustomInterface, Module
     }
 
     /**
+     * Additional/updated translations.
+     *
+     * @param string $language
+     *
+     * @return array<string,string>
+     */
+    public function customTranslations(string $language): array
+    {
+        $this->lang_switch = $language;
+
+        return [];
+    }
+    /**
      * A footer, to be added at the bottom of every page.
      *
      * @param ServerRequestInterface $request
@@ -125,7 +140,15 @@ return new class extends AbstractModule implements ModuleCustomInterface, Module
      */
     public function getPageAction(ServerRequestInterface $request): ResponseInterface
     {
-        return $this->viewResponse($this->name() . '::page', [
+        $page = '';
+        switch ($this->lang_switch) {
+            case 'cs':
+                $page = '::page-cs';
+                break;
+            default:
+                $page = '::page';
+        }
+        return $this->viewResponse($this->name() . $page, [
             'title' => $this->title(),
             'tree'  => $request->getAttribute('tree'),
         ]);
