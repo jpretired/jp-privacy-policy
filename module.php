@@ -80,6 +80,15 @@ return new class extends AbstractModule implements ModuleCustomInterface, Module
     }
 
     /**
+     * {@inheritDoc}
+     * @see \Fisharebest\Webtrees\Module\ModuleCustomInterface::customModuleSupportUrl()
+     */
+    public function customModuleSupportUrl(): string
+    {
+        return 'https://github.com/jpretired/jp-privacy-policy/issues';
+    }
+
+    /**
      * Bootstrap the module
      */
     public function boot(): void
