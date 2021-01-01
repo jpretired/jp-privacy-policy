@@ -42,5 +42,51 @@ use Fisharebest\Webtrees\I18N;
 
 <p>Svůj prohlížeč můžete nastavit tak, abyste byli informováni o nastavení souborů cookie, a povolit soubory cookie pouze v jednotlivých případech, vyloučit přijímání souborů cookie v určitých případech nebo obecně a aktivovat automatické mazání souborů cookie při zavření prohlížeče. Pokud deaktivujete cookies, může být funkčnost tohoto webu omezena.</p>
 
+<?php if ($analytics->isNotEmpty()) : ?>
+    <h3><?= I18N::translate('Tracking and analytics') ?></h3>
+
+    <ul>
+        <li>
+            <?= I18N::translate('This website uses third-party services to learn about visitor behavior.') ?>
+            <ul>
+                <?php foreach ($analytics as $module) : ?>
+                    <li>
+                        <?= $module->title() ?> —
+                        <a href="<?= e($module->externalUrl()) ?>"><?= e($module->externalUrl()) ?></a>
+                    </li>
+                <?php endforeach ?>
+            </ul>
+        </li>
+
+        <li>
+            <?= I18N::translate('These services may use cookies or other tracking technology.') ?>
+        </li>
+
+        <li>
+            <?= I18N::translate('You can opt out of tracking by setting the “Do Not Track” header in your browser preferences.') ?>
+        </li>
+    </ul>
+<?php endif ?>
+
+<h3><?= I18N::translate('Data controller') ?></h3>
+
+<ul>
+    <li>
+        <?= I18N::translate('This website is operated by the following individuals.') ?>
+
+        <ul>
+            <?php foreach ($administrators as $administrator) : ?>
+                <li>
+                    <?= e($administrator->realName()) ?> —
+                    <a href="mailto:<?= e($administrator->email()) ?>"><?= e($administrator->email()) ?></a>
+
+
+                </li>
+            <?php endforeach ?>
+        </ul>
+
+    </li>
+</ul>
+
 </div>
 

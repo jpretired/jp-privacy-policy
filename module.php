@@ -11,20 +11,32 @@ namespace JpNamespace;
 use Fisharebest\Webtrees\Auth;
 use Fisharebest\Webtrees\I18N;
 use Fisharebest\Localization\Translation;
-use Fisharebest\Webtrees\Module\AbstractModule;
+use Fisharebest\Webtrees\Module\PrivacyPolicy;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
-use Fisharebest\Webtrees\Module\ModuleFooterInterface;
-use Fisharebest\Webtrees\Module\ModuleFooterTrait;
 use Fisharebest\Webtrees\View;
+use Fisharebest\Webtrees\Services\ModuleService;
+use Fisharebest\Webtrees\Services\UserService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-return new class extends AbstractModule implements ModuleCustomInterface, ModuleFooterInterface {
+return new class extends PrivacyPolicy implements ModuleCustomInterface {
     use ModuleCustomTrait;
-    use ModuleFooterTrait;
 
-    private $lang_switch;
+    /** @var ModuleService */
+    private $module_service;
+
+    /** @var UserService */
+    private $user_service;
+
+    private $language_switch;
+  
+    public function __construct() {
+        parent::__construct(
+            $this->module_service = new ModuleService(),
+            $this->user_service = new UserService()
+        );
+    }
     
     /**
      * @return string
@@ -66,7 +78,7 @@ return new class extends AbstractModule implements ModuleCustomInterface, Module
      */
     public function customModuleVersion(): string
     {
-        return '1.0.1';
+        return '1.0.0';
     }
 
     /**
@@ -116,7 +128,7 @@ return new class extends AbstractModule implements ModuleCustomInterface, Module
      */
     public function customTranslations(string $language): array
     {
-        $this->lang_switch = $language;
+        $this->language_switch = $language;
 
         return [];
     }
@@ -136,8 +148,13 @@ return new class extends AbstractModule implements ModuleCustomInterface, Module
             'action' => 'Page',
             'tree'   => $tree ? $tree->name() : null,
         ]);
+        $user = $request->getAttribute('user');
+        assert($user instanceof UserInterface);
 
-        return view($this->name() . '::footer', ['url' => $url]);
+        return view($this->name() . '::footer', [
+            'url' => $url,
+            'uses_analytics' => $this->analyticsModules($tree, $user)->isNotEmpty(),
+        ]);
     }
 
     /**
@@ -150,14 +167,23 @@ return new class extends AbstractModule implements ModuleCustomInterface, Module
     public function getPageAction(ServerRequestInterface $request): ResponseInterface
     {
         $page = '';
-        switch ($this->lang_switch) {
+        switch ($this->language_switch) {
             case 'cs':
+            case 'sk':
                 $page = '::page-cs';
                 break;
             default:
                 $page = '::page';
         }
+        $tree = $request->getAttribute('tree');
+        assert($tree instanceof Tree);
+
+        $user = $request->getAttribute('user');
+        assert($user instanceof UserInterface);
+
         return $this->viewResponse($this->name() . $page, [
+            'administrators' => $this->user_service->administrators(),
+            'analytics'      => $this->analyticsModules($tree, $user),
             'title' => $this->title(),
             'tree'  => $request->getAttribute('tree'),
         ]);
