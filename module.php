@@ -4,6 +4,7 @@
  * Custom footer and Privacy policy for Czech locale environment.
  * Partly inspired by mp, see:
  * https://www.webtrees.net/index.php/en/forum/help-for-2-0/35233-how-to-edit-the-privacy-policy-and-the-footer#82090
+ * Author: Josef Prause
  */
 
 declare(strict_types=1);
@@ -80,7 +81,7 @@ return new class extends PrivacyPolicy implements ModuleCustomInterface {
      */
     public function customModuleVersion(): string
     {
-        return '1.0.1';
+        return '1.0.2';
     }
 
     /**
