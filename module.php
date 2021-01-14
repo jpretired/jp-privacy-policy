@@ -11,17 +11,21 @@ declare(strict_types=1);
 
 namespace JpNamespace;
 
-use Fisharebest\Webtrees\Auth;
+use Fisharebest\Webtrees\Contracts\UserInterface;
 use Fisharebest\Webtrees\I18N;
-use Fisharebest\Localization\Translation;
 use Fisharebest\Webtrees\Module\PrivacyPolicy;
 use Fisharebest\Webtrees\Module\ModuleCustomInterface;
 use Fisharebest\Webtrees\Module\ModuleCustomTrait;
+use Fisharebest\Webtrees\Tree;
+use Illuminate\Support\Collection;
 use Fisharebest\Webtrees\View;
 use Fisharebest\Webtrees\Services\ModuleService;
 use Fisharebest\Webtrees\Services\UserService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+
+use function assert;
+use function view;
 
 return new class extends PrivacyPolicy implements ModuleCustomInterface {
     use ModuleCustomTrait;
@@ -145,6 +149,10 @@ return new class extends PrivacyPolicy implements ModuleCustomInterface {
     public function getFooter(ServerRequestInterface $request): string
     {
         $tree = $request->getAttribute('tree');
+
+        if ($tree === null) {
+            return '';
+        }
 
         $url = route('module', [
             'module' => $this->name(),
