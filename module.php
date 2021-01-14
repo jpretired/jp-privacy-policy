@@ -85,7 +85,7 @@ return new class extends PrivacyPolicy implements ModuleCustomInterface {
      */
     public function customModuleVersion(): string
     {
-        return '1.0.2';
+        return '1.0.3';
     }
 
     /**
