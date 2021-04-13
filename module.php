@@ -4,6 +4,8 @@
  * Custom footer and Privacy policy for Czech locale environment.
  * Partly inspired by mp, see:
  * https://www.webtrees.net/index.php/en/forum/help-for-2-0/35233-how-to-edit-the-privacy-policy-and-the-footer#82090
+ * Later adopted the MikeT's way of contact the administrator, see:
+ * https://www.webtrees.net/index.php/en/forum/help-for-2-0/35233-how-to-edit-the-privacy-policy-and-the-footer#84085
  * Author: Josef Prause
  */
 
@@ -23,6 +25,7 @@ use Fisharebest\Webtrees\Services\ModuleService;
 use Fisharebest\Webtrees\Services\UserService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Fisharebest\Webtrees\User;
 
 use function assert;
 use function view;
@@ -85,7 +88,7 @@ return new class extends PrivacyPolicy implements ModuleCustomInterface {
      */
     public function customModuleVersion(): string
     {
-        return '1.0.5';
+        return '1.0.6';
     }
 
     /**
@@ -191,12 +194,35 @@ return new class extends PrivacyPolicy implements ModuleCustomInterface {
 
         $user = $request->getAttribute('user');
         assert($user instanceof UserInterface);
+        
+        $administrators = $this->user_service->administrators();
+        $contactlinks = array();
+        foreach ($administrators as $administrator) {
+        	$user_id = $administrator->id();
+        	$contactlinks[$user_id] = $this->contactLink($administrator);
+        }
 
         return $this->viewResponse($this->name() . $page, [
-            'administrators' => $this->user_service->administrators(),
+            'administrators' => $administrators,
             'analytics'      => $this->analyticsModules($tree, $user),
             'title' => $this->title(),
             'tree'  => $request->getAttribute('tree'),
+            'contactlinks' => $contactlinks,
         ]);
+    }
+    
+    /**
+     * Create a contact link for a user.
+     *
+     * @param User $user
+     *
+     * @return string
+     */
+    public function contactLink(User $user): string
+    {
+        if ($user instanceof User) {
+            $request = app(ServerRequestInterface::class);
+            return $this->user_service->contactLink($user, $request);
+          }
     }
 };

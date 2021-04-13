@@ -89,9 +89,7 @@ use Fisharebest\Webtrees\I18N;
         <ul>
             <?php foreach ($administrators as $administrator) : ?>
                 <li>
-                    <?= e($administrator->realName()) ?> —
-                    <a href="mailto:<?= e($administrator->email()) ?>"><?= e($administrator->email()) ?></a>
-
+                    <?php echo($contactlinks[$administrator->id()]) ?>
 
                 </li>
             <?php endforeach ?>
