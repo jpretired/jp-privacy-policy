@@ -26,6 +26,7 @@ use Fisharebest\Webtrees\Services\UserService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Fisharebest\Webtrees\User;
+use Fisharebest\Webtrees\Registry;
 
 use function assert;
 use function view;
@@ -221,7 +222,10 @@ return new class extends PrivacyPolicy implements ModuleCustomInterface {
     public function contactLink(User $user): string
     {
         if ($user instanceof User) {
-            $request = app(ServerRequestInterface::class);
+// app ve wt 2.2 neexistuje, místo toho je Registry::container()->get
+// viz https://github.com/fisharebest/webtrees/issues/5080
+//          $request = app(ServerRequestInterface::class); ... webtrees 2.1
+            $request = Registry::container()->get(ServerRequestInterface::class); // webtrees 2.2
             return $this->user_service->contactLink($user, $request);
           }
     }
